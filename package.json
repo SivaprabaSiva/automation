@@ -1,0 +1,33 @@
+{
+  "name": "automation",
+  "version": "1.0.0",
+  "main": "index.js",
+ "scripts": {
+    "test": "jest",
+    "build:tsc": "tsc",
+    "build:babel": "babel dist-tsc --out-dir dist --extensions \".js,.jsx\"",
+    "build": "npm run build:tsc && npm run build:babel",    
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SivaprabaSiva/automation.git"
+  },
+  "author": "Sivapraba Sivakumar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SivaprabaSiva/automation/issues"
+  },
+  "homepage": "https://github.com/SivaprabaSiva/automation#readme",
+  "description": "",
+  "dependencies": {
+    "@types/jest": "^30.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.28.0",
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-typescript": "^7.27.1",
+    "typescript": "^5.8.3"
+  }
+}
