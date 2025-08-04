@@ -78,13 +78,45 @@ function getUserPosts(userId) {
     }
   });
 }
-function main(userId) {
+function getComments(postId) {
+  return __awaiter(this, void 0, void 0, function* () {
+    try {
+      const comments = yield axios_1.default.get(`https://jsonplaceholder.typicode.com/comments?postId=${postId}`);
+      const userComments = lodash_1.default.map(comments.data, comment => {
+        return lodash_1.default.pick(comment, ['postId', 'body']);
+      });
+      // console.log(userComments)
+      return userComments;
+    } catch (error) {
+      console.log('No comment found');
+      return null;
+    }
+  });
+}
+function getUserPostComments(userId) {
   return __awaiter(this, void 0, void 0, function* () {
     const user = yield getUser(userId);
     if (!user) {
       return;
     }
     const posts = yield getUserPosts(userId);
+    if (!posts || posts.length === 0) {
+      return;
+    }
+    const firstPostId = posts[0].id;
+    const comments = yield getComments(firstPostId);
+    return {
+      user: user,
+      posts: posts,
+      comments: comments
+    };
   });
 }
-main(1);
+function main(userId) {
+  return __awaiter(this, void 0, void 0, function* () {
+    const data = yield getUserPostComments(userId);
+    console.log(data);
+  });
+}
+// main(1)
+main(2);

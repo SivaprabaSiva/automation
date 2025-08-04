@@ -45,11 +45,42 @@ async function getUserPosts(userId: number){
     }
 }
 
-async function main(userId: number){
-    const user = await getUser(userId)
+async function getComments(postId: number) {
+    try {
+        const comments = await axios.get<Comment>(`https://jsonplaceholder.typicode.com/comments?postId=${postId}`)
+        const userComments = _.map(comments.data, (comment) => {
+            return _.pick(comment, ['postId', 'body'])
+        })
+        // console.log(userComments)
+        return userComments
+    } catch (error) {
+        console.log('No comment found')
+        return null
+    }
+}
+
+async function getUserPostComments(userId:number) {
+     const user = await getUser(userId)
     if(!user) {
         return 
     }
     const posts = await getUserPosts(userId)
+    if(!posts || posts.length === 0){
+        return
+    }
+    const firstPostId = posts[0].id
+    const comments = await getComments(firstPostId)
+    return {
+        user: user,
+        posts: posts,
+        comments: comments
+    }
+    
 }
-main(1)
+async function main(userId: number){
+   const data = await getUserPostComments(userId)
+   console.log(data)
+}
+
+// main(1)
+main(2)
