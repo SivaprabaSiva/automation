@@ -4,7 +4,7 @@ import * as fs from "fs" ;
 
 const TOKEN_DIR = 'token';
 const USERNAME = 'sateuro@ajirasoft.com'
-const TOKEN_FILE_PATH = "token/sateuro@ajirasft.com.json"
+const TOKEN_FILE_PATH = "token/sateuro@ajirasft.com.txt"
 const PASSWORD = 'C@sAr3t@!L'
 
 async function getAccessToken() {
@@ -40,27 +40,56 @@ async function saveTokenToFile(token: string, filePath: string) {
   }
 }
 
-async function getTokenFromFile(filePath: string) {
+async function getTokenFromFile(filePath: string): Promise<string | null> {
   try {
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    const token = fs.readFileSync(filePath, 'utf-8');
     console.log("Token loaded successfully from " + filePath);
-    console.log("fileContent", fileContent)
-    return fileContent;
+    console.log("fileContent", token)
+    return token;
   } catch (error: any) {
     if (error.code !== 'ENOENT') {
-      console.error("Error rtokeneading or parsing token from file: ", error.message);
+      console.error("Error reading or parsing token from file: ", error.message);
     }
     return null;
   }
-} 
-
-async function main() {
-  const token = await getAccessToken();  
-  if (token) {
-    saveTokenToFile(token, TOKEN_FILE_PATH);
-    getTokenFromFile(TOKEN_FILE_PATH)
-  }
-  
 }
 
-main();
+async function getToken() {
+  try {
+    const token = await getTokenFromFile(TOKEN_FILE_PATH)
+    if (token) {
+      console.log("Already token is there")
+      return token
+    }
+    const newToken = await getAccessToken()
+    if (!newToken) {
+      return null
+    }
+    await saveTokenToFile(newToken, TOKEN_FILE_PATH)
+    return newToken
+  } catch (error: any) {
+    console.log(error.message)
+    return null
+  }
+}
+
+async function removeToken(filePath: string){
+  try {
+    fs.rmSync(filePath)
+    console.log("Removed the token file successfully")
+  } catch (error: any) {
+    console.log("Error on token file deletion")
+  }
+}
+
+// async function main() {
+//   const token = await getToken()
+//   console.log(token)
+// }
+
+// main();
+
+export default {
+  getToken,
+  removeToken
+}
